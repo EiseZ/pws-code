@@ -1,4 +1,1 @@
-pyquaternion
-pyvis
-raypy
 numpy
