@@ -1,4 +1,4 @@
-simulator/target
+simulator/target/*
 renderer/renders
 renderer/__pycache__
 renderer/tests

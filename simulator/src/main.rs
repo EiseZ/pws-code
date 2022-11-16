@@ -107,5 +107,14 @@ fn main() {
     //simulation.calculate_accelerations();
     //simulation.calculate_velocities();
     //simulation.calculate_positions();
-    println!("Hello, world!");
+
+    use std::env;
+    let args: Vec<String> = env::args().collect();
+    let filename = {
+        if args.len() > 1 {
+            args[1].clone()
+        } else {
+            String::from("output.csv")
+        }
+    };
 }
