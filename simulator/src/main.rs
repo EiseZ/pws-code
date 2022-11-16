@@ -123,7 +123,12 @@ fn main() {
 
     // Main loop
     let mut current_time: f32 = 0.;
+    let mut simulation = Simulation::new();
     while current_time < MAX_TIME {
+        simulation.calculate_force_vector();
+        //simulation.calculate_accelerations();
+        //simulation.calculate_velocities();
+        //simulation.calculate_positions();
 
         let mut file = File::options().write(true).append(true).open(filename).expect("[Error] Failed toi open file");
         writeln!(file, "new timestep");
@@ -131,9 +136,4 @@ fn main() {
         current_time += TIMESTEP;
     }
 
-    let mut simulation = Simulation::new();
-    simulation.calculate_force_vector();
-    //simulation.calculate_accelerations();
-    //simulation.calculate_velocities();
-    //simulation.calculate_positions();
 }
