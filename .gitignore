@@ -1,2 +1,3 @@
 simulator/target
 renderer/renders
+renderer/__pycache__
