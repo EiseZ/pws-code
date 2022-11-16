@@ -34,6 +34,16 @@ impl Simulation {
             particle.force = force;
         }
     }
+
+    fn current_state_to_csv(&mut self) -> String {
+        let mut output = String::new();
+
+        for particle in self.particles {
+            output.push_str(&format!("{},{},{},", particle.pos.x, particle.pos.y, particle.pos.z));
+        }
+
+        output
+    }
 }
 
 const PARTICLE_MASS: f32 = 0.01; // TODO: Calculate based on dimentions
@@ -102,7 +112,7 @@ impl std::ops::AddAssign for Vector<f32> {
 }
 
 const MAX_TIME: f32 = 10.;
-const TIMESTEP: f32 = .01;
+const TIMESTEP: f32 = 0.01;
 
 use std::env;
 use std::fs::File;
@@ -118,7 +128,7 @@ fn main() {
         }
     };
     { // Empty the file
-        let mut file = File::create(filename).expect("[Error] Failed to open file");
+        File::create(&filename).expect("[Error] Failed to open file");
     }
 
     // Main loop
@@ -130,8 +140,8 @@ fn main() {
         //simulation.calculate_velocities();
         //simulation.calculate_positions();
 
-        let mut file = File::options().write(true).append(true).open(filename).expect("[Error] Failed toi open file");
-        writeln!(file, "new timestep");
+        let mut file = File::options().write(true).append(true).open(&filename).expect("[Error] Failed toi open file");
+        writeln!(file, "{}", simulation.current_state_to_csv());
 
         current_time += TIMESTEP;
     }
