@@ -1,3 +1,4 @@
 pyquaternion
 pyvis
 raypy
+numpy
