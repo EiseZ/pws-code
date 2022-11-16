@@ -101,14 +101,14 @@ impl std::ops::AddAssign for Vector<f32> {
     }
 }
 
-fn main() {
-    let mut simulation = Simulation::new();
-    simulation.calculate_force_vector();
-    //simulation.calculate_accelerations();
-    //simulation.calculate_velocities();
-    //simulation.calculate_positions();
+const MAX_TIME: f32 = 10.;
+const TIMESTEP: f32 = .01;
 
-    use std::env;
+use std::env;
+use std::fs::File;
+use std::io::prelude::*;
+fn main() {
+    // Parse args
     let args: Vec<String> = env::args().collect();
     let filename = {
         if args.len() > 1 {
@@ -117,4 +117,23 @@ fn main() {
             String::from("output.csv")
         }
     };
+    { // Empty the file
+        let mut file = File::create(filename).expect("[Error] Failed to open file");
+    }
+
+    // Main loop
+    let mut current_time: f32 = 0.;
+    while current_time < MAX_TIME {
+
+        let mut file = File::options().write(true).append(true).open(filename).expect("[Error] Failed toi open file");
+        writeln!(file, "new timestep");
+
+        current_time += TIMESTEP;
+    }
+
+    let mut simulation = Simulation::new();
+    simulation.calculate_force_vector();
+    //simulation.calculate_accelerations();
+    //simulation.calculate_velocities();
+    //simulation.calculate_positions();
 }
