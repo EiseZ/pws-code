@@ -95,7 +95,7 @@ fn main() {
         //simulation.calculate_positions();
 
         let mut file = File::options().write(true).append(true).open(&filename).expect("[Error] Failed toi open file");
-        writeln!(file, "{}", simulation.current_state_to_csv());
+        writeln!(file, "{}", simulation.current_state_to_csv()).expect(&format!("Failed to write to file at time: {}", current_time));
 
         current_time += TIMESTEP;
     }
