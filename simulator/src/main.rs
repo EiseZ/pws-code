@@ -42,7 +42,7 @@ impl Simulation {
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy)]
 struct Particle {
     pos: Vector<f32>,
     vel: Vector<f32>,
