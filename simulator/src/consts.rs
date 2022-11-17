@@ -1,4 +1,4 @@
-use crate::Vector;
+use crate::vector::Vector;
 
 // Simulation properties
 pub const AMOUNT_OF_CELLS: usize = 100;
