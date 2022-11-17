@@ -1,16 +1,10 @@
-// Settings
-const AMOUNT_OF_CELLS: usize = 100;
+mod consts;
+use crate::consts::*;
 
 struct Simulation {
     particles: [Particle; AMOUNT_OF_CELLS],
 }
 
-const GRAVITY_ACC_VECTOR: Vector<f32> = Vector { x: 0., y: -9.81, z: 0. };
-const DAMPING_CONSTANT: f32 = 1.; // TODO: What is good value for this?
-const ATTRACTION_EXPONENT: i32 = 6;
-const REPULSION_EXPONENT: i32 = 12;
-const ATTRACTION_FACTOR: f32 = 0.000000000000000002737205; // TODO: What is good value for this?
-const REPULSION_FACTOR: f32 = 377616490000000000000.; // TODO: What is good value for this?
 impl Simulation {
     fn new() -> Simulation {
         Simulation {
@@ -46,7 +40,6 @@ impl Simulation {
     }
 }
 
-const PARTICLE_MASS: f32 = 0.01; // TODO: Calculate based on dimentions
 #[derive(Copy, Clone)]
 struct Particle {
     pos: Vector<f32>,
@@ -74,7 +67,7 @@ impl Particle {
 }
 
 #[derive(Copy, Clone, PartialEq)]
-struct Vector<T> {
+pub struct Vector<T> {
     x: T,
     y: T,
     z: T,
@@ -110,9 +103,6 @@ impl std::ops::AddAssign for Vector<f32> {
         }
     }
 }
-
-const MAX_TIME: f32 = 10.;
-const TIMESTEP: f32 = 0.01;
 
 use std::env;
 use std::fs::File;
