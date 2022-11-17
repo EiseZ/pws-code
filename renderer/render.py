@@ -5,6 +5,7 @@ import math
 
 def render(filename, simName):
     simData = loader.loader(filename)
+    cam = camera(1, 1, 1, 3, 1, 1, 1)
 
 def renderStill(simName, currentVectors):
     pass
@@ -20,8 +21,11 @@ def circlePos(vec, cam):
     pass
 
 class camera():
-    def __init__(self, a, b, c, d) -> None:
+    def __init__(self, a, b, c, d, xCamMiddle, yCamMiddle, zCamMiddle) -> None:
         self.a = a
         self.b = b
         self.c = c
         self.d = d
+        self.xCamMiddle = xCamMiddle
+        self.yCamMiddle = yCamMiddle
+        self.zCamMiddle = zCamMiddle
