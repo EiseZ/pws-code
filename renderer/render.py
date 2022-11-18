@@ -10,7 +10,7 @@ def render(filename, simName):
 def renderStill(simName, currentVectors):
     pass
 
-def circleSize(vec, cam):
+def circleDistance(vec, cam):
     x = vec[0]
     y = vec[1]
     z = vec[2]
