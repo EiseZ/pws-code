@@ -10,6 +10,13 @@ def render(filename, simName):
 def renderStill(simName, currentVectors):
     pass
 
+def getPointPos(vec,cam):
+    # Step one: de projected vector
+    normalVecCam = [cam.a, cam.b, cam.c]
+    normalizedNormalVector = normalize(normalVecCam)
+    distCurrentVector = circleDistance(vec,cam)
+    projectedPoint = [vec[0]+(normalizedNormalVector[0] * distCurrentVector), vec[1]+(normalizedNormalVector[1] * distCurrentVector), vec[2]+(normalizedNormalVector[2] * distCurrentVector)]
+
 def normalize(vec):
     lSq = vec[0] ^ 2 + vec[1] ^ 2 + vec[2] ^ 2
     l = math.sqrt(lSq)
