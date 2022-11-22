@@ -10,6 +10,11 @@ def render(filename, simName):
 def renderStill(simName, currentVectors):
     pass
 
+def normalize(vec):
+    lSq = vec[0] ^ 2 + vec[1] ^ 2 + vec[2] ^ 2
+    l = math.sqrt(lSq)
+    return [vec[0] / l,vec[1] / l,vec[2] / l]
+
 def circleDistance(vec, cam):
     x = vec[0]
     y = vec[1]
