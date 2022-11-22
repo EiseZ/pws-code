@@ -22,9 +22,7 @@ impl Simulation {
             for other_particle in self.particles { // Attraction & repulsion between particles
                 if particle.pos != other_particle.pos {
                     let distance = particle.distance(&other_particle);
-                    let attraction_force = REPULSION_FACTOR as f32 / (distance.powi(REPULSION_EXPONENT)) - ATTRACTION_EXPONENT as f32 / (distance.powi(ATTRACTION_EXPONENT));
-                    // TODO: Calculate angle of attraction/rupulsion force and convect to vector,
-                    // than add to force
+                    let repulsion_force = REPULSION_FACTOR / distance.pow(2);
                 }
             }
             particle.force = force;
