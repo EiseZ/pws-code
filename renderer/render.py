@@ -5,7 +5,7 @@ import math
 
 def render(filename, simName):
     simData = loader.loader(filename)
-    cam = camera(1, 1, 1, 3, 1, 1, 1)
+    cam = camera(0, 1, 1, 2, 1, 1, 1)
 
 def renderStill(simName, currentVectors):
     pass
@@ -17,6 +17,12 @@ def getPointPos(vec,cam):
     distCurrentVector = circleDistance(vec,cam)
     projectedPoint = [vec[0]+(normalizedNormalVector[0] * distCurrentVector), vec[1]+(normalizedNormalVector[1] * distCurrentVector), vec[2]+(normalizedNormalVector[2] * distCurrentVector)]
 
+    # Step two: position on plane
+    localProjectedPoint = [projectedPoint[0]- cam.xCamMiddle, projectedPoint[1]- cam.yCamMiddle, projectedPoint[2]- cam.zCamMiddle]
+    transformedPoint = [localProjectedPoint[0], math.sqrt( (localProjectedPoint[1]*localProjectedPoint[1]) + (localProjectedPoint[2]*localProjectedPoint[2]) )]
+
+    return transformedPoint
+
 def normalize(vec):
     lSq = vec[0] ^ 2 + vec[1] ^ 2 + vec[2] ^ 2
     l = math.sqrt(lSq)
@@ -27,7 +33,7 @@ def circleDistance(vec, cam):
     y = vec[1]
     z = vec[2]
 
-    return math.abs((cam.a * x) + (cam.b * y) + (cam.c * z) - cam.d) / math.sqrt((cam.a*cam.a) + (cam.b*cam.b) + (cam.c*cam.c))
+    return abs((cam.a * x) + (cam.b * y) + (cam.c * z) - cam.d) / math.sqrt((cam.a*cam.a) + (cam.b*cam.b) + (cam.c*cam.c))
 
 def circlePos(vec, cam):
     pass
