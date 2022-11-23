@@ -1,0 +1,1 @@
+ffmpeg -framerate 4 -i ./renders/$1/%d.png -c:v libx264 -r 30 ./renders/$1/out.mp4
