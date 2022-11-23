@@ -60,3 +60,10 @@ class camera():
         self.xCamMiddle = xCamMiddle
         self.yCamMiddle = yCamMiddle
         self.zCamMiddle = zCamMiddle
+
+class config():
+    def __init__(self, circleSize, circleColor, xMargin, yMargin) -> None:
+        self.circleSize = circleSize
+        self.circleColor = circleColor
+        self.xMargin = xMargin
+        self.yMargin = yMargin
