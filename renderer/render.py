@@ -8,17 +8,24 @@ def render(filename, simName):
     os.mkdir("./renders/" + simName)
     simData = loader.loader(filename)
     cam = camera(0, 1, 1, 2, 1, 1, 1)
-    for i in range(len(simData)):
-        renderStill(simName, i, simData[i], cam)
+    conf = config(40, "#306BAC", 100, 100, 10)
 
-def renderStill(simName, simId, currentVectors,cam):
+    for i in range(len(simData)):
+        renderStill(simName, i, simData[i], cam, conf)
+
+def renderStill(simName, simId, currentVectors, cam, conf):
     im = Image.new("RGB", (1920, 1080))
     draw = ImageDraw.Draw(im, 'RGBA')
 
     for i in currentVectors:
         x,y = getPointPos(i,cam)
-        if (-10 < x < 10) and (-10 < y < 10):
-            draw.ellipse([(480 + x*40,480 + y*40),(520 + x*40,520 + y*40)],fill="#306BAC")
+        if (-conf.scale < x < conf.scale) and (-conf.scale < y < conf.scale):
+            xFactor = ( 960 - (conf.xMargin * 2) ) / conf.scale
+            yFactor = ( 540 - (conf.yMargin * 2) ) / conf.scale
+            draw.ellipse(
+                [(960 + x*xFactor - (conf.circleSize / 2),540 + y*yFactor - (conf.circleSize / 2)),
+                (960 + x*xFactor + (conf.circleSize / 2),540 + y*yFactor + (conf.circleSize / 2))
+                ],fill=conf.circleColor)
 
     file_name = "renders/" + simName + "/" + str(simId) + '.png'
     im.save(file_name)
@@ -62,8 +69,9 @@ class camera():
         self.zCamMiddle = zCamMiddle
 
 class config():
-    def __init__(self, circleSize, circleColor, xMargin, yMargin) -> None:
+    def __init__(self, circleSize, circleColor, xMargin, yMargin, scale) -> None:
         self.circleSize = circleSize
         self.circleColor = circleColor
         self.xMargin = xMargin
         self.yMargin = yMargin
+        self.scale = scale
