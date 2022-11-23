@@ -2,12 +2,16 @@ import loader
 import numpy as np
 from PIL import Image, ImageDraw
 import math
+import os
 
 def render(filename, simName):
+    os.mkdir("./renders/" + simName)
     simData = loader.loader(filename)
     cam = camera(0, 1, 1, 2, 1, 1, 1)
+    for i in range(len(simData)):
+        renderStill(simName, i, simData[i], cam)
 
-def renderStill(simName, currentVectors):
+def renderStill(simName, simId, currentVectors,cam):
     pass
 
 def getPointPos(vec,cam):
