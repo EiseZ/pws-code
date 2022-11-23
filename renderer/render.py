@@ -7,8 +7,8 @@ import os
 def render(filename, simName):
     os.mkdir("./renders/" + simName)
     simData = loader.loader(filename)
-    cam = camera(0, 1, 1, 2, 1, 1, 1)
-    conf = config(40, "#306BAC", 100, 100, 10)
+    cam = camera(0, 1, 1, 2, 0, 1, 1)
+    conf = config(40, "#306BAC", 100, 100, 5)
 
     for i in range(len(simData)):
         renderStill(simName, i, simData[i], cam, conf)
