@@ -14,7 +14,7 @@ def render(filename, simName):
         renderStill(simName, i, simData[i], cam, conf)
 
 def renderStill(simName, simId, currentVectors, cam, conf):
-    im = Image.new("RGB", (1920, 1080))
+    im = Image.new("RGB", (1920, 1080),color="#E3E3E3")
     draw = ImageDraw.Draw(im, 'RGBA')
 
     for i in currentVectors:
