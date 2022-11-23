@@ -12,7 +12,16 @@ def render(filename, simName):
         renderStill(simName, i, simData[i], cam)
 
 def renderStill(simName, simId, currentVectors,cam):
-    pass
+    im = Image.new("RGB", (1920, 1080))
+    draw = ImageDraw.Draw(im, 'RGBA')
+
+    for i in currentVectors:
+        x,y = getPointPos(i,cam)
+        if (-10 < x < 10) and (-10 < y < 10):
+            draw.ellipse([(480 + x*40,480 + y*40),(520 + x*40,520 + y*40)],fill="#306BAC")
+
+    file_name = "renders/" + simName + "/" + str(simId) + '.png'
+    im.save(file_name)
 
 def getPointPos(vec,cam):
     # Step one: de projected vector
