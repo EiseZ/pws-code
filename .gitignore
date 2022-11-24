@@ -3,3 +3,4 @@ simulator/*.csv
 renderer/renders
 renderer/__pycache__
 renderer/tests
+.vscode/*
