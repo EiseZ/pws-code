@@ -9,23 +9,77 @@ struct Simulation {
 
 impl Simulation {
     fn new() -> Simulation {
+        let mut particles = [Particle::new(Vector::new(0., 0., 0.), Vector::new(0., 0., 0.), Vector::new(0., 0., 0.)); AMOUNT_OF_CELLS];
+        let mut position = Vector::new(0., 0., 0.);
+        for particle in particles.iter_mut() {
+            particle.pos = position;
+            position += 0.01;
+        }
         Simulation {
-            particles: [Particle::new(Vector::new(0., 0., 0.), Vector::new(0., 0., 0.), Vector::new(0., 0., 0.)); AMOUNT_OF_CELLS],
+            particles,
         }
     }
 
     fn calculate_force_vector(&mut self) {
-        for mut particle in self.particles {
-            let mut force = particle.force;
+        let particles_copy = self.particles.clone();
+        for particle in self.particles.iter_mut() {
+            let mut force = Vector::new(0., 0., 0.);
             force += GRAVITY_ACC_VECTOR * PARTICLE_MASS; // Gravity
-            force += particle.vel * (DAMPING_CONSTANT * -1.); // Damping force
-            for other_particle in self.particles { // Attraction & repulsion between particles
+            //force += particle.vel * (DAMPING_CONSTANT * -1.); // Damping force
+            for other_particle in particles_copy { // Attraction & repulsion between particles
                 if particle.pos != other_particle.pos {
-                    let distance = particle.distance(&other_particle);
-                    let repulsion_force = REPULSION_FACTOR / distance.pow(2);
+                    let distance = particle.distance(&other_particle);                    
+                    if distance.is_nan() {
+                        continue;
+                    }
+                    let repulsion_force = REPULSION_FACTOR / distance.powi(2);
+                    let vector_a_b = other_particle.pos - particle.pos;
+                    let repulsion_force_vector = (vector_a_b / vector_a_b.len()) * repulsion_force;
+                    force += repulsion_force_vector;
+                    println!("Rep_Force: {}; Dist: {}; force: {:?};", repulsion_force, distance, force);
                 }
             }
             particle.force = force;
+        }
+        println!("Loop");
+    }
+
+    fn calculate_accelerations(&mut self) {
+        for particle in self.particles.iter_mut() {
+            particle.acc = particle.force / PARTICLE_MASS;
+        }
+    }
+
+    fn calculate_velocities(&mut self, timestep: f32) {
+        for particle in self.particles.iter_mut() {
+            particle.vel += particle.acc * timestep;
+        }
+    }
+
+    fn calculate_positions(&mut self, timestep: f32) {
+        for particle in self.particles.iter_mut() {
+            particle.pos += particle.vel * timestep;
+            if particle.pos.x > 10. {
+                particle.vel.x = particle.vel.x * -1.;
+                particle.force.x = particle.force.x * -1.;
+            } else if particle.pos.x < -10. {
+                particle.vel.x = particle.vel.x * -1.;
+                particle.force.x = particle.force.x * -1.;
+            }
+            if particle.pos.z > 10. {
+                particle.vel.z = particle.vel.z * -1.;
+                particle.force.z = particle.force.z * -1.;
+            } else if particle.pos.z < -10. {
+                particle.vel.z = particle.vel.z * -1.;
+                particle.force.z = particle.force.z * -1.;
+            }
+            if particle.pos.y > 10. {
+                particle.vel.y = particle.vel.y * -1.;
+                particle.force.y = particle.force.y * -1.;
+            } else if particle.pos.y < -10. {
+                particle.vel.y = particle.vel.y * -1.;
+                particle.force.y = particle.force.y * -1.;
+            }
         }
     }
 
@@ -40,7 +94,7 @@ impl Simulation {
     }
 }
 
-#[derive(Copy)]
+#[derive(Copy, Clone, Debug)]
 struct Particle {
     pos: Vector<f32>,
     vel: Vector<f32>,
@@ -61,7 +115,7 @@ impl Particle {
     fn distance(&self, particle: &Particle) -> f32 {
         let pos1 = self.pos;
         let pos2 = particle.pos;
-        let distance = (pos2.x - pos1.x).powi(2) + (pos2.y - pos1.y).powi(2) + (pos2.z - pos1.z).powi(2);
+        let distance = ((pos2.x - pos1.x).powi(2) + (pos2.y - pos1.y).powi(2) + (pos2.z - pos1.z).powi(2)).sqrt();
         distance
     }
 }
@@ -88,9 +142,9 @@ fn main() {
     let mut simulation = Simulation::new();
     while current_time < MAX_TIME {
         simulation.calculate_force_vector();
-        //simulation.calculate_accelerations();
-        //simulation.calculate_velocities();
-        //simulation.calculate_positions();
+        simulation.calculate_accelerations();
+        simulation.calculate_velocities(TIMESTEP);
+        simulation.calculate_positions(TIMESTEP);
 
         let mut file = File::options().write(true).append(true).open(&filename).expect("[Error] Failed toi open file");
         writeln!(file, "{}", simulation.current_state_to_csv()).expect(&format!("Failed to write to file at time: {}", current_time));
