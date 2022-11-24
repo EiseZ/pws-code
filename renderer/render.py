@@ -8,7 +8,7 @@ def render(filename, simName):
     os.mkdir("./renders/" + simName)
     simData = loader.loader(filename)
     cam = camera(0, 1, 1, 2, 0, 1, 1)
-    conf = config(40, "#306BAC", 100, 100, 5)
+    conf = config(40, "#306BAC", 20, 20, 5)
 
     for i in range(len(simData)):
         renderStill(simName, i, simData[i], cam, conf)
@@ -44,7 +44,7 @@ def getPointPos(vec,cam):
     return transformedPoint
 
 def normalize(vec):
-    lSq = vec[0] ^ 2 + vec[1] ^ 2 + vec[2] ^ 2
+    lSq = (vec[0] * vec[0]) + (vec[1] * vec[1]) + (vec[2] * vec[2])
     l = math.sqrt(lSq)
     return [vec[0] / l,vec[1] / l,vec[2] / l]
 
