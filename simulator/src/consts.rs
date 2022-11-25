@@ -1,7 +1,7 @@
 use crate::vector::Vector;
 
 // Simulation properties
-pub const AMOUNT_OF_CELLS: usize = 17;
+pub const AMOUNT_OF_CELLS: usize = 5;
 pub const MAX_TIME: f32 = 10.;
 pub const TIMESTEP: f32 = 0.01;
 

@@ -36,12 +36,10 @@ impl Simulation {
                     let vector_a_b = other_particle.pos - particle.pos;
                     let repulsion_force_vector = (vector_a_b / vector_a_b.len()) * repulsion_force;
                     force += repulsion_force_vector;
-                    println!("Rep_Force: {}; Dist: {}; force: {:?};", repulsion_force, distance, force);
                 }
             }
             particle.force = force;
         }
-        println!("Loop");
     }
 
     fn calculate_accelerations(&mut self) {
