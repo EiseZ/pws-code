@@ -13,7 +13,7 @@ impl Simulation {
         let mut position = Vector::new(0., 0., 0.);
         for particle in particles.iter_mut() {
             particle.pos = position;
-            position += 0.01;
+            position.x += 0.1;
         }
         Simulation {
             particles,
@@ -28,9 +28,9 @@ impl Simulation {
             //force += particle.vel * (DAMPING_CONSTANT * -1.); // Damping force
             for other_particle in particles_copy { // Attraction & repulsion between particles
                 if particle.pos != other_particle.pos {
-                    let distance = particle.distance(&other_particle);                    
-                    if distance.is_nan() {
-                        continue;
+                     let distance = particle.distance(&other_particle);                    
+                     if distance.is_nan() {
+                         continue;
                     }
                     let repulsion_force = REPULSION_FACTOR / distance.powi(2);
                     let vector_a_b = other_particle.pos - particle.pos;
@@ -87,6 +87,9 @@ impl Simulation {
         for particle in self.particles {
             output.push_str(&format!("{},{},{},", particle.pos.x, particle.pos.y, particle.pos.z));
         }
+
+        // Remove trailing comma
+        output.pop();
 
         output
     }

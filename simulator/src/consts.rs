@@ -12,4 +12,5 @@ pub const DAMPING_CONSTANT: f32 = 1.; // TODO: What is good value for this?
 pub const REPULSION_FACTOR: f32 = 0.0001;
                                                       //
 // Particle properties
-pub const PARTICLE_MASS: f32 = 0.01; // TODO: Calculate based on dimentions
+pub const PARTICLE_MASS: f32 = 1.; // TODO: Calculate based on dimentions
+pub const PARTICLE_RADIUS: f32 = 0.001;
