@@ -5,7 +5,13 @@ import math
 import os
 
 def render(filename, simName):
-    os.mkdir("./renders/" + simName)
+    try:
+        os.mkdir("./renders/" + simName)
+    except FileExistsError:
+        if(input("Folder already exists,") != "y"):
+            exit()
+    finally:
+        pass
     simData = loader.loader(filename)
     cam = camera(0, 1, 1, 2, 0, 1, 1, 1000, 1000)
     conf = config(40, "#306BAC", 20, 20, 5)
