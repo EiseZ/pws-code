@@ -8,24 +8,27 @@ def render(filename, simName):
     os.mkdir("./renders/" + simName)
     simData = loader.loader(filename)
     cam = camera(0, 1, 1, 2, 0, 1, 1)
-    conf = config(40, "#306BAC", 20, 20, 5)
+    conf = config(10, "#306BAC", 0, 0, 1)
 
     for i in range(len(simData)):
+        print(f"Rendering frame {i}")
         renderStill(simName, i, simData[i], cam, conf)
 
 def renderStill(simName, simId, currentVectors, cam, conf):
-    im = Image.new("RGB", (1920, 1080),color="#E3E3E3")
+    im = Image.new("RGB", (1000, 1000),color="#E3E3E3")
     draw = ImageDraw.Draw(im, 'RGBA')
 
     for i in currentVectors:
         x,y = getPointPos(i,cam)
         if (-conf.scale < x < conf.scale) and (-conf.scale < y < conf.scale):
-            xFactor = ( 960 - (conf.xMargin * 2) ) / conf.scale
-            yFactor = ( 540 - (conf.yMargin * 2) ) / conf.scale
+            xFactor = ( 500 - (conf.xMargin * 2) ) / conf.scale
+            yFactor = ( 500 - (conf.yMargin * 2) ) / conf.scale
             draw.ellipse(
-                [(960 + x*xFactor - (conf.circleSize / 2),540 + y*yFactor - (conf.circleSize / 2)),
-                (960 + x*xFactor + (conf.circleSize / 2),540 + y*yFactor + (conf.circleSize / 2))
+                [(500 + x*xFactor - (conf.circleSize / 2),500 + y*yFactor - (conf.circleSize / 2)),
+                (500 + x*xFactor + (conf.circleSize / 2),500 + y*yFactor + (conf.circleSize / 2))
                 ],fill=conf.circleColor)
+    
+    draw.line([(0, 900), (1000, 900)], "#000000", 5)
 
     file_name = "renders/" + simName + "/" + str(simId) + '.png'
     im.save(file_name)
