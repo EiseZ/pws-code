@@ -16,8 +16,24 @@ impl<T> Vector<T> {
 }
 
 impl Vector<f32> {
+    pub fn new_fill(val: f32) -> Vector<f32> {
+        Vector {
+            x: val,
+            y: val,
+            z: val,
+        }
+    }
+
     pub fn len(&self) -> f32 {
         return (self.x.powi(2) + self.y.powi(2) + self.z.powi(2)).sqrt();
+    }
+
+    pub fn normalized(&self) -> Vector<f32> {
+        return *self / self.len();
+    }
+
+    pub fn dot(&self, vec2: &Vector<f32>) -> f32 {
+        return self.x * vec2.x + self.y * vec2.y + self.z * vec2.z;
     }
 }
 
@@ -63,11 +79,22 @@ impl std::ops::AddAssign<f32> for Vector<f32> {
     }
 }
 
+impl std::ops::Add for Vector<f32> {
+    type Output = Vector<f32>;
+    fn add(self, rhs: Self) -> Vector<f32> {
+        Vector {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
+    }
+}
+
 impl std::ops::Sub for Vector<f32> {
     type Output = Vector<f32>;
     fn sub(self, rhs: Self) -> Vector<f32> {
         Vector {
-            x: self.y - rhs.x,
+            x: self.x - rhs.x,
             y: self.y - rhs.y,
             z: self.z - rhs.z,
         }
