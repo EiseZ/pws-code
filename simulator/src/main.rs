@@ -9,12 +9,13 @@ struct Simulation {
 
 impl Simulation {
     fn new() -> Simulation {
-        let mut particles = [Particle::new(Vector::new(0., 0., 0.), Vector::new(0., 0., 0.), Vector::new(0., 0., 0.)); AMOUNT_OF_CELLS];
-        let mut position = Vector::new(0., 0., 0.);
-        for particle in particles.iter_mut() {
-            particle.pos = position;
-            position.x += 0.1;
-        }
+        let mut particles = [Particle::new(Vector::new_fill(0.), Vector::new_fill(0.), Vector::new_fill(0.)),
+                             Particle::new(Vector::new(0.1, 0., 0.), Vector::new(-0.1, 0., 0.), Vector::new_fill(0.))];
+        //let mut position = Vector::new(0., 0., 0.);
+        //for particle in particles.iter_mut() {
+        //   particle.pos = position;
+        //   position.x += 0.1;
+        //}
         Simulation {
             particles,
         }
@@ -28,14 +29,19 @@ impl Simulation {
             //force += particle.vel * (DAMPING_CONSTANT * -1.); // Damping force
             for other_particle in particles_copy { // Attraction & repulsion between particles
                 if particle.pos != other_particle.pos {
-                     let distance = particle.distance(&other_particle);                    
-                     if distance.is_nan() {
-                         continue;
+                    let distance = particle.distance(&other_particle);
+                    if distance.is_nan() {
+                        continue;
                     }
-                    let repulsion_force = REPULSION_FACTOR / distance.powi(2);
                     let vector_a_b = other_particle.pos - particle.pos;
-                    let repulsion_force_vector = (vector_a_b / vector_a_b.len()) * repulsion_force;
-                    force += repulsion_force_vector;
+                    let normalized_a_b = vector_a_b.normalized();
+
+                    // Repulsion
+                    let repulsion_force = REPULSION_FACTOR / distance.powi(2);
+                    let repulsion_force_vector = normalized_a_b * repulsion_force;
+                    //force += repulsion_force_vector;
+
+                    // Collision
                 }
             }
             particle.force = force;
@@ -49,34 +55,57 @@ impl Simulation {
     }
 
     fn calculate_velocities(&mut self, timestep: f32) {
-        for particle in self.particles.iter_mut() {
-            particle.vel += particle.acc * timestep;
+        let mut new_particles = self.particles.clone();
+        for i in 0..new_particles.len() {
+            new_particles[i].vel += new_particles[i].acc * timestep;
+
+            for other_particle_i in 0..new_particles.len() {
+                if !new_particles[i].checkedCollision && new_particles[i].pos != new_particles[other_particle_i].pos {
+                    let distance = new_particles[i].distance(&new_particles[other_particle_i]);
+                    // Collision
+                    println!("{}", distance);
+                    if distance < PARTICLE_RADIUS * 2. {
+                        //let vector_b_a = new_particles[i].pos - new_particles[other_particle_i].pos;
+                        //let normalized_b_a = vector_b_a.normalized();
+                        //let projection = normalized_b_a * new_particles[i].vel.dot(&normalized_b_a);
+                        //new_particles[other_particle_i].vel = projection * 2. + new_particles[i].vel;
+                        let vector_a_b = new_particles[other_particle_i].pos - new_particles[i].pos;
+                        let normalized_a_b = vector_a_b.normalized();
+                        let vel_relative = new_particles[i].vel - new_particles[other_particle_i].vel;
+                        let vel_normal = normalized_a_b * vel_relative.dot(&normalized_a_b);
+                        new_particles[i].vel = new_particles[i].vel - vel_normal;
+                        new_particles[other_particle_i].vel = new_particles[other_particle_i].vel + vel_normal;
+                    }
+
+                    new_particles[i].checkedCollision = true;
+                    new_particles[other_particle_i].checkedCollision = true;
+                }
+            }
         }
+
+        for i in 0..new_particles.len() {
+            new_particles[i].checkedCollision = false;
+        }
+        self.particles = new_particles;
     }
 
     fn calculate_positions(&mut self, timestep: f32) {
         for particle in self.particles.iter_mut() {
             particle.pos += particle.vel * timestep;
-            if particle.pos.x > 10. {
+            if particle.pos.x > SIMULATION_SIZE {
                 particle.vel.x = particle.vel.x * -1.;
-                particle.force.x = particle.force.x * -1.;
-            } else if particle.pos.x < -10. {
+            } else if particle.pos.x < SIMULATION_SIZE * -1. {
                 particle.vel.x = particle.vel.x * -1.;
-                particle.force.x = particle.force.x * -1.;
             }
-            if particle.pos.z > 10. {
+            if particle.pos.z > SIMULATION_SIZE {
                 particle.vel.z = particle.vel.z * -1.;
-                particle.force.z = particle.force.z * -1.;
-            } else if particle.pos.z < -10. {
+            } else if particle.pos.z < SIMULATION_SIZE * -1. {
                 particle.vel.z = particle.vel.z * -1.;
-                particle.force.z = particle.force.z * -1.;
             }
-            if particle.pos.y > 10. {
+            if particle.pos.y > SIMULATION_SIZE {
                 particle.vel.y = particle.vel.y * -1.;
-                particle.force.y = particle.force.y * -1.;
-            } else if particle.pos.y < -10. {
+            } else if particle.pos.y < SIMULATION_SIZE * -1. {
                 particle.vel.y = particle.vel.y * -1.;
-                particle.force.y = particle.force.y * -1.;
             }
         }
     }
@@ -101,6 +130,7 @@ struct Particle {
     vel: Vector<f32>,
     acc: Vector<f32>,
     force: Vector<f32>,
+    checkedCollision: bool,
 }
 
 impl Particle {
@@ -110,6 +140,7 @@ impl Particle {
             vel,
             acc,
             force: Vector::new(0., 0., 0.),
+            checkedCollision: false,
         }
     }
 
