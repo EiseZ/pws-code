@@ -9,13 +9,12 @@ struct Simulation {
 
 impl Simulation {
     fn new() -> Simulation {
-        let mut particles = [Particle::new(Vector::new_fill(0.), Vector::new_fill(0.), Vector::new_fill(0.)),
-                             Particle::new(Vector::new(0.1, 0., 0.), Vector::new(-0.1, 0., 0.), Vector::new_fill(0.))];
-        //let mut position = Vector::new(0., 0., 0.);
-        //for particle in particles.iter_mut() {
-        //   particle.pos = position;
-        //   position.x += 0.1;
-        //}
+        let mut particles = [Particle::new(Vector::new_fill(0.), Vector::new_fill(0.1), Vector::new_fill(0.)); AMOUNT_OF_CELLS];
+        let mut position = Vector::new(0., 0., 0.);
+        for particle in particles.iter_mut() {
+           particle.pos = position;
+           position.x += 0.1;
+        }
         Simulation {
             particles,
         }
@@ -56,31 +55,24 @@ impl Simulation {
 
     fn calculate_velocities(&mut self, timestep: f32) {
         let mut new_particles = self.particles.clone();
+        let mut particles_to_check_to: VecDeque<Particle> = self.particles.clone().into();
+        particles_to_check_to.pop_front();
         for i in 0..new_particles.len() {
             new_particles[i].vel += new_particles[i].acc * timestep;
 
-            for other_particle_i in 0..new_particles.len() {
-                if !new_particles[i].checkedCollision && new_particles[i].pos != new_particles[other_particle_i].pos {
-                    let distance = new_particles[i].distance(&new_particles[other_particle_i]);
-                    // Collision
-                    println!("{}", distance);
-                    if distance < PARTICLE_RADIUS * 2. {
-                        //let vector_b_a = new_particles[i].pos - new_particles[other_particle_i].pos;
-                        //let normalized_b_a = vector_b_a.normalized();
-                        //let projection = normalized_b_a * new_particles[i].vel.dot(&normalized_b_a);
-                        //new_particles[other_particle_i].vel = projection * 2. + new_particles[i].vel;
-                        let vector_a_b = new_particles[other_particle_i].pos - new_particles[i].pos;
-                        let normalized_a_b = vector_a_b.normalized();
-                        let vel_relative = new_particles[i].vel - new_particles[other_particle_i].vel;
-                        let vel_normal = normalized_a_b * vel_relative.dot(&normalized_a_b);
-                        new_particles[i].vel = new_particles[i].vel - vel_normal;
-                        new_particles[other_particle_i].vel = new_particles[other_particle_i].vel + vel_normal;
-                    }
-
-                    new_particles[i].checkedCollision = true;
-                    new_particles[other_particle_i].checkedCollision = true;
+            for (other_i, other_particle) in particles_to_check_to.iter().enumerate() {
+                let distance = new_particles[i].distance(&other_particle);
+                // Collision
+                if distance < PARTICLE_RADIUS * 2. {
+                    let vector_a_b = other_particle.pos - new_particles[i].pos;                        
+                    let normalized_a_b = vector_a_b.normalized();
+                    let vel_relative = new_particles[i].vel - other_particle.vel;
+                    let vel_normal = normalized_a_b * vel_relative.dot(&normalized_a_b);
+                    new_particles[i].vel = new_particles[i].vel - vel_normal;
+                    new_particles[other_i].vel = other_particle.vel + vel_normal;
                 }
             }
+            particles_to_check_to.pop_front();
         }
 
         for i in 0..new_particles.len() {
@@ -152,6 +144,7 @@ impl Particle {
     }
 }
 
+use std::collections::VecDeque;
 use std::env;
 use std::fs::File;
 use std::io::prelude::*;
