@@ -25,7 +25,9 @@ def renderStill(simName, simId, currentVectors, cam, conf):
     draw = ImageDraw.Draw(im, 'RGBA')
 
     for i in currentVectors:
-        x,y = getPointPos(i,cam)
+        #x,y = getPointPos(i,cam)
+        x = i[0]
+        y = i[1] * -1
         if (-conf.scale < x < conf.scale) and (-conf.scale < y < conf.scale):
             xFactor = ( (cam.vw/2) - (conf.xMargin * 2) ) / conf.scale
             yFactor = ( (cam.vh/2) - (conf.yMargin * 2) ) / conf.scale
@@ -34,7 +36,7 @@ def renderStill(simName, simId, currentVectors, cam, conf):
                 ((cam.vw/2) + x*xFactor + (conf.circleSize / 2),(cam.vh/2) + y*yFactor + (conf.circleSize / 2))
                 ],fill=conf.circleColor)
 
-    draw.line([(0, 900), (1000, 900)], "#000000", 5)
+    #draw.line([(0, 900), (1000, 900)], "#000000", 5)
 
     file_name = "renders/" + simName + "/" + str(simId) + '.png'
     im.save(file_name)
