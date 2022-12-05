@@ -14,7 +14,7 @@ int main() {
         simulation.calculateForces();
         simulation.calculateAccelerations();
         simulation.calculateVelocities();
-        simulation.calculatePositions();
+        simulation.calculatePositions(currentTime);
         filestream << simulation.logState();
 
         std::cout << "Current time: " << currentTime << std::endl;

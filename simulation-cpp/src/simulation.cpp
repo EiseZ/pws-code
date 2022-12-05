@@ -67,15 +67,15 @@ void Simulation::calculateVelocities() {
     }
 }
 
-void Simulation::calculatePositions() {
+void Simulation::calculatePositions(double currentTime) {
     for (int i = 0; i < PARTICLE_AMOUNT; i++) {
         particles[i]->pos = particles[i]->pos.add(particles[i]->vel.multiply(TIMESTEP));
 
         if (particles[i]->pos.x > SIMULATION_SIZE) {
             particles[i]->pos.x = SIMULATION_SIZE;
             particles[i]->vel.x = particles[i]->vel.x * -1;
-        } else if (particles[i]->pos.x < SIMULATION_SIZE * -1) {
-            particles[i]->pos.x = SIMULATION_SIZE * -1;
+        } else if (particles[i]->pos.x < SIMULATION_SIZE * ((10 - currentTime) * 0.1) * -1) {
+            particles[i]->pos.x = SIMULATION_SIZE * ((10 - currentTime) * 0.1) * -1;
             particles[i]->vel.x = particles[i]->vel.x * -1;
         }
         if (particles[i]->pos.y > SIMULATION_SIZE) {
