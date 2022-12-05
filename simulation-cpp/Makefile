@@ -3,7 +3,7 @@ all:
 	make run
 
 build:
-	gcc -Wall -Wextra -Iinc -lstdc++ -lm src/*.cpp
+	gcc -Wall -Wextra -Iinc -lstdc++ -lm -O3 src/*.cpp
 
 run:
 	./a.out

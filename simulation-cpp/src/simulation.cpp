@@ -38,6 +38,9 @@ void Simulation::calculateVelocities() {
             }
             double distance = particles[i]->distance(particles[j]->pos);
             std::cout << std::to_string(distance) << std::endl;
+            if (distance == 0) {
+                particles[i]->pos.x += 0.000001;
+            }
             if (distance < PARTICLE_RADIUS * 2) {
                 Vector vectorItoJ = particles[j]->pos.sub(particles[i]->pos);                        
                 Vector normalizedItoJ = vectorItoJ.normalize();
