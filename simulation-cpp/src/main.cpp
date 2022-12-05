@@ -17,9 +17,10 @@ int main() {
         simulation.calculatePositions();
         filestream << simulation.logState();
 
+        std::cout << "Current time: " << currentTime << std::endl;
         currentTime += TIMESTEP;
     }
-    
+
     filestream.close();
     return 0;
 }
