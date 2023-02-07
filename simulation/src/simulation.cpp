@@ -71,25 +71,25 @@ void Simulation::calculatePositions(double currentTime) {
     for (int i = 0; i < PARTICLE_AMOUNT; i++) {
         particles[i]->pos = particles[i]->pos.add(particles[i]->vel.multiply(TIMESTEP));
 
-        if (particles[i]->pos.x > SIMULATION_SIZE) {
-            particles[i]->pos.x = SIMULATION_SIZE;
+        if (particles[i]->pos.x > SIMULATION_SIZE_X) {
+            particles[i]->pos.x = SIMULATION_SIZE_X;
             particles[i]->vel.x = particles[i]->vel.x * -1;
-        } else if (particles[i]->pos.x < SIMULATION_SIZE * ((10 - currentTime) * 0.1) * -1) {
-            particles[i]->pos.x = SIMULATION_SIZE * ((10 - currentTime) * 0.1) * -1;
+        } else if (particles[i]->pos.x < SIMULATION_SIZE_X * -1) {
+            particles[i]->pos.x = SIMULATION_SIZE_X * -1;
             particles[i]->vel.x = particles[i]->vel.x * -1;
         }
-        if (particles[i]->pos.y > SIMULATION_SIZE) {
-            particles[i]->pos.y = SIMULATION_SIZE;
+        if (particles[i]->pos.y > SIMULATION_SIZE_Y) {
+            particles[i]->pos.y = SIMULATION_SIZE_Y;
             particles[i]->vel.y = particles[i]->vel.y * -1;
-        } else if (particles[i]->pos.y < SIMULATION_SIZE * -1) {
-            particles[i]->pos.y = SIMULATION_SIZE * -1;
+        } else if (particles[i]->pos.y < SIMULATION_SIZE_Y * -1) {
+            particles[i]->pos.y = SIMULATION_SIZE_Y * -1;
             particles[i]->vel.y = particles[i]->vel.y * -1;
         }
-        if (particles[i]->pos.z > SIMULATION_SIZE) {
-            particles[i]->pos.z = SIMULATION_SIZE;
+        if (particles[i]->pos.z > SIMULATION_SIZE_Z) {
+            particles[i]->pos.z = SIMULATION_SIZE_Z;
             particles[i]->vel.z = particles[i]->vel.z * -1;
-        } else if (particles[i]->pos.z < SIMULATION_SIZE * -1) {
-            particles[i]->pos.z = SIMULATION_SIZE * -1;
+        } else if (particles[i]->pos.z < SIMULATION_SIZE_Z * -1) {
+            particles[i]->pos.z = SIMULATION_SIZE_Z * -1;
             particles[i]->vel.z = particles[i]->vel.z * -1;
         }
     }
