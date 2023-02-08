@@ -25,14 +25,12 @@ def renderStill(simName, simId, currentVectors, cam, conf):
     draw = ImageDraw.Draw(im, 'RGBA')
 
     for i in currentVectors:
-        #x,y = getPointPos(i,cam)
-        x = i[0] * 1000 + cam.vw/2
-        y = i[1] * -1000 + cam.vh/2
-        #print((x-(conf.circleSize / 2),x+(conf.circleSize/2)))
+        x = i[0] * 10000 + cam.vw/2
+        y = cam.vh - (i[1] * 10000 + cam.vh/2)
+
         draw.ellipse(
             [(x-(conf.circleSize / 2),y-(conf.circleSize/2)), (x+(conf.circleSize/2),y+(conf.circleSize/2))]
             ,fill=conf.circleColor)
-    draw.line([(0, 900), (1000, 900)], "#000000", 5)
 
     file_name = "renders/" + simName + "/" + str(simId) + '.png'
     im.save(file_name)
