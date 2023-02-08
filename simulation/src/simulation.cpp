@@ -71,8 +71,10 @@ void Simulation::calculatePositions(double currentTime) {
     for (int i = 0; i < PARTICLE_AMOUNT; i++) {
         particles[i]->pos = particles[i]->pos.add(particles[i]->vel.multiply(TIMESTEP));
 
-        if (particles[i]->pos.x > SIMULATION_SIZE_X) {
-            particles[i]->pos.x = SIMULATION_SIZE_X;
+        const double plankX = SIMULATION_SIZE_X - (currentTime * AVRG_PLANK_VELOCITY);
+
+        if (particles[i]->pos.x > plankX) {
+            particles[i]->pos.x = plankX;
             particles[i]->vel.x = particles[i]->vel.x * -1;
         } else if (particles[i]->pos.x < SIMULATION_SIZE_X * -1) {
             particles[i]->pos.x = SIMULATION_SIZE_X * -1;
