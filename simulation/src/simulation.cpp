@@ -5,20 +5,19 @@
 #include "constants.hpp"
 
 Simulation::Simulation() {
-    Vector pos = Vector(-0.9, 0.9, 0);
-    particles[0] = new Particle(Vector(0, 1, 0), Vector(0.2, 0, 0), Vector(0, 0, 0));
-    for (int i = 1; i < PARTICLE_AMOUNT; i++) {
-        particles[i] = new Particle(pos, Vector(0, 0, 0), Vector(0, 0, 0));
-        if (pos.x < 1) {
-            pos.x += 0.05;
+    Vector pos = Vector(SIMULATION_SIZE_X * -1, SIMULATION_SIZE_Y, 0);
+    for (int i = 0; i < PARTICLE_AMOUNT; i++) {
+        if (pos.x < SIMULATION_SIZE_X) {
+            pos.x += PARTICLE_RADIUS * 2.1;
         } else {
-            pos.x = -0.9;
-            pos.y += 0.05;
+            pos.x -= (SIMULATION_SIZE_X * 2) - 0.0002;
+            pos.y += PARTICLE_RADIUS * 2.1;
+        }
+        if (pos.y >= SIMULATION_SIZE_Y) {
+            pos.y = SIMULATION_SIZE_Y * -1 + 0.0002;
         }
 
-        if (pos.y >= 1) {
-            pos.y -= 1.902;
-        }
+        particles[i] = new Particle(Vector(pos.x, pos.y, pos.z), Vector(0, 0, 0), Vector(0, 0, 0));
     }
 
 }
@@ -27,7 +26,7 @@ void Simulation::calculateForces() {
     for (int i = 0; i < PARTICLE_AMOUNT; i++) {
         Vector force = Vector(0, 0, 0);
         force = force.add(GRAVITY_ACCELRATION.multiply(PARTICLE_MASS));
-        force = force.add(particles[i]->vel.multiply(DAMPENING_CONSTANT * -1));
+        //force = force.add(particles[i]->vel.multiply(DAMPENING_CONSTANT * -1));
         particles[i]->force = force;
     }
 }
@@ -71,28 +70,33 @@ void Simulation::calculatePositions(double currentTime) {
     for (int i = 0; i < PARTICLE_AMOUNT; i++) {
         particles[i]->pos = particles[i]->pos.add(particles[i]->vel.multiply(TIMESTEP));
 
-        const double plankX = SIMULATION_SIZE_X - (currentTime * AVRG_PLANK_VELOCITY);
+        double plankX;
+        if (currentTime < 0.5) {
+            plankX = SIMULATION_SIZE_X - (currentTime * AVRG_PLANK_VELOCITY);
+        } else {
+            plankX = SIMULATION_SIZE_X - (0.5 * AVRG_PLANK_VELOCITY);
+        }
 
         if (particles[i]->pos.x > plankX) {
             particles[i]->pos.x = plankX;
-            particles[i]->vel.x = particles[i]->vel.x * -1;
+            particles[i]->vel.x = abs(particles[i]->vel.x) * -1 - AVRG_PLANK_VELOCITY;
         } else if (particles[i]->pos.x < SIMULATION_SIZE_X * -1) {
             particles[i]->pos.x = SIMULATION_SIZE_X * -1;
-            particles[i]->vel.x = particles[i]->vel.x * -1;
+            particles[i]->vel.x = particles[i]->vel.x * -0.5;
         }
         if (particles[i]->pos.y > SIMULATION_SIZE_Y) {
             particles[i]->pos.y = SIMULATION_SIZE_Y;
-            particles[i]->vel.y = particles[i]->vel.y * -1;
+            particles[i]->vel.y = particles[i]->vel.y * -0.5;
         } else if (particles[i]->pos.y < SIMULATION_SIZE_Y * -1) {
             particles[i]->pos.y = SIMULATION_SIZE_Y * -1;
-            particles[i]->vel.y = particles[i]->vel.y * -1;
+            particles[i]->vel.y = particles[i]->vel.y * -0.5;
         }
         if (particles[i]->pos.z > SIMULATION_SIZE_Z) {
             particles[i]->pos.z = SIMULATION_SIZE_Z;
-            particles[i]->vel.z = particles[i]->vel.z * -1;
+            particles[i]->vel.z = particles[i]->vel.z * -0.5;
         } else if (particles[i]->pos.z < SIMULATION_SIZE_Z * -1) {
             particles[i]->pos.z = SIMULATION_SIZE_Z * -1;
-            particles[i]->vel.z = particles[i]->vel.z * -1;
+            particles[i]->vel.z = particles[i]->vel.z * -0.5;
         }
     }
 }

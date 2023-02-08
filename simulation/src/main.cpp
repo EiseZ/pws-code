@@ -8,9 +8,8 @@ int main() {
     std::ofstream filestream;
     filestream.open("output.csv");
 
-    std::cout << PARTICLE_MASS << "\n";
-
     Simulation simulation;
+    filestream << simulation.logState();
     double currentTime = 0;
     while (currentTime  <= MAX_TIME) {
         simulation.calculateForces();
