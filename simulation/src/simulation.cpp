@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <algorithm>
 #include "simulation.hpp"
 #include "particle.hpp"
 #include "constants.hpp"
@@ -38,6 +39,8 @@ void Simulation::calculateAccelerations() {
 }
 
 void Simulation::calculateVelocities() {
+    Particle *newParticles[PARTICLE_AMOUNT];
+    std::copy(particles, particles + PARTICLE_AMOUNT, newParticles);
     for (int i = 0; i < PARTICLE_AMOUNT; i++) {
         particles[i]->vel = particles[i]->vel.add(particles[i]->acc.multiply(TIMESTEP));
 
@@ -57,13 +60,14 @@ void Simulation::calculateVelocities() {
                 if (distance / 2 < PARTICLE_RADIUS) {
                     Vector pointOfCollision = vectorItoJ.multiply(0.5);
                     double ratioOfRadius = distance / PARTICLE_RADIUS * 2;
-                    particles[i]->pos = particles[i]->pos.add(pointOfCollision).add(pointOfCollision.multiply(-1 * ratioOfRadius));
+                    newParticles[i]->pos = particles[i]->pos.add(pointOfCollision).add(pointOfCollision.multiply(-1 * ratioOfRadius));
                 }
-                particles[i]->vel = particles[i]->vel.sub(normalVelocity).multiply(1 - DAMPENING_CONSTANT);
-                particles[j]->vel = particles[j]->vel.add(normalVelocity).multiply(1 - DAMPENING_CONSTANT);
+                newParticles[i]->vel = particles[i]->vel.sub(normalVelocity).multiply(1 - DAMPENING_CONSTANT);
+                newParticles[j]->vel = particles[j]->vel.add(normalVelocity).multiply(1 - DAMPENING_CONSTANT);
             }
         }
     }
+    std::copy(newParticles, newParticles + PARTICLE_AMOUNT, particles);
 }
 
 void Simulation::calculatePositions(double currentTime) {
@@ -71,32 +75,34 @@ void Simulation::calculatePositions(double currentTime) {
         particles[i]->pos = particles[i]->pos.add(particles[i]->vel.multiply(TIMESTEP));
 
         double plankX;
-        if (currentTime < 0.5) {
-            plankX = SIMULATION_SIZE_X - (currentTime * AVRG_PLANK_VELOCITY);
+        if (currentTime < 0.2) {
+            plankX = SIMULATION_SIZE_X - (0.0 * AVRG_PLANK_VELOCITY);
+        } else if (currentTime < 0.5) {
+            plankX = SIMULATION_SIZE_X - ((currentTime - 0.2) * AVRG_PLANK_VELOCITY);
         } else {
-            plankX = SIMULATION_SIZE_X - (0.5 * AVRG_PLANK_VELOCITY);
+            plankX = SIMULATION_SIZE_X - (0.3 * AVRG_PLANK_VELOCITY);
         }
 
         if (particles[i]->pos.x > plankX) {
-            particles[i]->pos.x = plankX;
+            particles[i]->pos.x = plankX - (particles[i]->pos.x - plankX);
             particles[i]->vel.x = abs(particles[i]->vel.x) * -1 - AVRG_PLANK_VELOCITY;
         } else if (particles[i]->pos.x < SIMULATION_SIZE_X * -1) {
-            particles[i]->pos.x = SIMULATION_SIZE_X * -1;
-            particles[i]->vel.x = particles[i]->vel.x * -0.5;
+            particles[i]->pos.x = SIMULATION_SIZE_X * -1 - (particles[i]->pos.x + SIMULATION_SIZE_X);
+            particles[i]->vel.x = particles[i]->vel.x * -1.0;
         }
         if (particles[i]->pos.y > SIMULATION_SIZE_Y) {
-            particles[i]->pos.y = SIMULATION_SIZE_Y;
-            particles[i]->vel.y = particles[i]->vel.y * -0.5;
+            particles[i]->pos.y = SIMULATION_SIZE_Y - (particles[i]->pos.y - SIMULATION_SIZE_Y);
+            particles[i]->vel.y = particles[i]->vel.y * -1.0;
         } else if (particles[i]->pos.y < SIMULATION_SIZE_Y * -1) {
-            particles[i]->pos.y = SIMULATION_SIZE_Y * -1;
-            particles[i]->vel.y = particles[i]->vel.y * -0.5;
+            particles[i]->pos.y = SIMULATION_SIZE_Y * -1 - (particles[i]->pos.y + SIMULATION_SIZE_Y);
+            particles[i]->vel.y = particles[i]->vel.y * -1.0;
         }
         if (particles[i]->pos.z > SIMULATION_SIZE_Z) {
-            particles[i]->pos.z = SIMULATION_SIZE_Z;
-            particles[i]->vel.z = particles[i]->vel.z * -0.5;
+            particles[i]->pos.z = SIMULATION_SIZE_Z - (particles[i]->pos.z - SIMULATION_SIZE_Z);
+            particles[i]->vel.z = particles[i]->vel.z * -1.0;
         } else if (particles[i]->pos.z < SIMULATION_SIZE_Z * -1) {
-            particles[i]->pos.z = SIMULATION_SIZE_Z * -1;
-            particles[i]->vel.z = particles[i]->vel.z * -0.5;
+            particles[i]->pos.z = SIMULATION_SIZE_Z * -1 - (particles[i]->pos.z + SIMULATION_SIZE_Z);
+            particles[i]->vel.z = particles[i]->vel.z * -1.0;
         }
     }
 }
