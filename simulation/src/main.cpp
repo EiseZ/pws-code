@@ -6,7 +6,7 @@
 int main() {
     // Create file
     std::ofstream filestream;
-    filestream.open("output.csv");
+    filestream.open("/output/output.csv");
 
     std::cout << PARTICLE_MASS << "\n";
 
