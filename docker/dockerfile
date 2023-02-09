@@ -1,0 +1,5 @@
+FROM ubuntu:latest
+
+WORKDIR /
+COPY ./a.out /a.out
+CMD /a.out
