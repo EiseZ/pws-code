@@ -13,20 +13,17 @@ def render(filename, simName):
     finally:
         pass
     simData = loader.loader(filename)
-    cam = camera(0, 1, 1, 2, 0, 1, 1, 3150, 1200)
-    conf = config(10, "#306BAC", 0, 0, 1)
+    conf = config(20,"#306BAC", 100, 100, 1)
 
     for i in range(len(simData)):
-        print(f"Rendering frame {i}")
-        renderStill(simName, i, simData[i], cam, conf)
+        renderStill(simName, i, simData[i], math.floor(3150/2), 1200, conf)
 
-def renderStill(simName, simId, currentVectors, cam, conf):
-    im = Image.new("RGB", (cam.vw, cam.vh),color="#E3E3E3")
+def renderStill(simName, simId, currentVectors, width, height, conf):
+    im = Image.new("RGB", ((width + conf.xMargin), (height+conf.yMargin)),color="#E3E3E3")
     draw = ImageDraw.Draw(im, 'RGBA')
-
     for i in currentVectors:
-        x = i[0] * 10000 + cam.vw/2
-        y = cam.vh - (i[1] * 10000 + cam.vh/2)
+        x = (i[0]/2) * 10000 + (width/2) + (conf.xMargin/2)
+        y = height - ((i[1]/2) * 10000) + (conf.yMargin/2)
 
         draw.ellipse(
             [(x-(conf.circleSize / 2),y-(conf.circleSize/2)), (x+(conf.circleSize/2),y+(conf.circleSize/2))]
@@ -34,46 +31,6 @@ def renderStill(simName, simId, currentVectors, cam, conf):
 
     file_name = "renders/" + simName + "/" + str(simId) + '.png'
     im.save(file_name)
-
-def getPointPos(vec,cam):
-    # Step one: de projected vector
-    normalVecCam = [cam.a, cam.b, cam.c]
-    normalizedNormalVector = normalize(normalVecCam)
-    distCurrentVector = circleDistance(vec,cam)
-    projectedPoint = [vec[0]+(normalizedNormalVector[0] * distCurrentVector), vec[1]+(normalizedNormalVector[1] * distCurrentVector), vec[2]+(normalizedNormalVector[2] * distCurrentVector)]
-
-    # Step two: position on plane
-    localProjectedPoint = [projectedPoint[0]- cam.xCamMiddle, projectedPoint[1]- cam.yCamMiddle, projectedPoint[2]- cam.zCamMiddle]
-    transformedPoint = [localProjectedPoint[0], math.sqrt( (localProjectedPoint[1]*localProjectedPoint[1]) + (localProjectedPoint[2]*localProjectedPoint[2]) )]
-
-    return transformedPoint
-
-def normalize(vec):
-    lSq = (vec[0] * vec[0]) + (vec[1] * vec[1]) + (vec[2] * vec[2])
-    l = math.sqrt(lSq)
-    return [vec[0] / l,vec[1] / l,vec[2] / l]
-
-def circleDistance(vec, cam):
-    x = vec[0]
-    y = vec[1]
-    z = vec[2]
-
-    return abs((cam.a * x) + (cam.b * y) + (cam.c * z) - cam.d) / math.sqrt((cam.a*cam.a) + (cam.b*cam.b) + (cam.c*cam.c))
-
-def circlePos(vec, cam):
-    pass
-
-class camera():
-    def __init__(self, a, b, c, d, xCamMiddle, yCamMiddle, zCamMiddle, vw, vh) -> None:
-        self.a = a
-        self.b = b
-        self.c = c
-        self.d = d
-        self.xCamMiddle = xCamMiddle
-        self.yCamMiddle = yCamMiddle
-        self.zCamMiddle = zCamMiddle
-        self.vw = vw
-        self.vh = vh
 
 class config():
     def __init__(self, circleSize, circleColor, xMargin, yMargin, scale) -> None:

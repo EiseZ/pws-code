@@ -1,6 +1,13 @@
+rm ./renders/test.mp4
+echo "generating"
+cd ../simulation/
+make
+cd ../renderer
+mv ../simulation/output.csv ./output.csv
 echo "rendering"
-python3 ./main.py $1 $2
+python3 ./main.py ./output.csv test
 echo "converting"
-./convert.bash $2
+./convert.sh test
 echo "cleaning up"
-rm -r ./renders/$2/
+rm -r ./renders/test/
+mpv --keep-open=yes ./renders/test.mp4
