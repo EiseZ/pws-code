@@ -24,6 +24,10 @@ Vector Vector::multiply(double rhs) const {
     Vector product = Vector(this->x * rhs, this->y * rhs, this->z * rhs);
     return product;
 }
+Vector Vector::multiplyV(Vector *rhs) const {
+    Vector product = Vector(this->x * rhs->x, this->y * rhs->y, this->z * rhs->z);
+    return product;
+}
 
 Vector Vector::devide(double rhs) const {
     Vector product = Vector(this->x / rhs, this->y / rhs, this->z / rhs);

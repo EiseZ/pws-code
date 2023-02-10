@@ -14,7 +14,8 @@ public:
     void calculateForces();
     void calculateAccelerations();
     void calculateVelocities();
-    void calculatePositions(double currentTime);
+    void calculatePositions(double currentTime,bool ignite);
+    void printEnergy();
 
     std::string logState();
 };

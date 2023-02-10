@@ -6,16 +6,17 @@
 int main() {
     // Create file
     std::ofstream filestream;
-    filestream.open("/output/output.csv");
+    filestream.open("output.csv");
 
     Simulation simulation;
     filestream << simulation.logState();
     double currentTime = 0;
     while (currentTime  <= MAX_TIME) {
+        simulation.printEnergy();
         simulation.calculateForces();
         simulation.calculateAccelerations();
         simulation.calculateVelocities();
-        simulation.calculatePositions(currentTime);
+        simulation.calculatePositions(currentTime,false);
         filestream << simulation.logState();
 
         std::cout << "Current time: " << currentTime << std::endl;
