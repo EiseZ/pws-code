@@ -4,8 +4,8 @@
 
 #include "vector.hpp"
 
-const double MAX_TIME = 1; // Correct = 5
-const int PARTICLE_AMOUNT = 1000; // To change
+const double MAX_TIME = 2; // Correct = 5
+const int PARTICLE_AMOUNT = 3000; // To change
 const double TIMESTEP = 0.01; // To change
                               //
 const double SIMULATION_SIZE_X = 0.315/2; // Correct

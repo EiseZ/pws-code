@@ -13,7 +13,7 @@ def render(filename, simName):
     finally:
         pass
     simData = loader.loader(filename)
-    conf = config(20,"#306BAC", 100, 100, 1)
+    conf = config(20,"#306BAC", 315, 120, 1)
 
     for i in range(len(simData)):
         renderStill(simName, i, simData[i], math.floor(3150/2), 1200, conf)

@@ -64,7 +64,7 @@ void Simulation::calculateVelocities() {
                 Particle* B = particles[j];
                 Vector vectorAtoB = B->pos.sub(A->pos);
                 Vector normalizedAtoB = vectorAtoB.normalize();
-                double p = (A->vel.dot(normalizedAtoB) - B->vel.dot(normalizedAtoB)); 
+                double p = (A->vel.dot(normalizedAtoB) - B->vel.dot(normalizedAtoB));
                 newParticles[i]->vel = A->vel.sub(normalizedAtoB.multiply(p));
                 newParticles[j]->vel = B->vel.add(normalizedAtoB.multiply(p));
             }
@@ -123,7 +123,7 @@ void Simulation::calculatePositions(double currentTime, bool ignite) {
         }
     }
     if(preIgnition){
-        Simulation::calculatePositions(currentTime,true);   
+        Simulation::calculatePositions(currentTime,true);
         std::cout << particlesTouching <<"\n";
     }
 }
@@ -151,7 +151,17 @@ std::string Simulation::logState() {
         output.append(",");
     }
 
-    output.pop_back();
+    double energy = 0.0;
+    for (int i = 0; i < PARTICLE_AMOUNT; i++) {
+        double x = particles[i]->vel.x;
+        double y = particles[i]->vel.y;
+        double z = particles[i]->vel.z;
+        double len = sqrt(x*x + y*y + z*z);
+        energy += 0.5 * len * len * PARTICLE_MASS;
+        energy += particles[i]->pos.y * 9.81 * PARTICLE_MASS;
+    }
+    output.append(std::to_string(energy));
+
     output.append("\n");
 
     return output;
