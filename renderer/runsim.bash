@@ -1,7 +1,8 @@
 rm ./renders/test.mp4
+rm -r ./renders/test/
 echo "generating"
 cd ../simulation/
-make
+time make
 cd ../renderer
 mv ../simulation/output.csv ./output.csv
 echo "rendering"

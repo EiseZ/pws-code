@@ -6,8 +6,8 @@
 #include "constants.hpp"
 #include <math.h>
 
-int particlesTouching = 0;
-bool preIgnition = false;
+//int particlesTouching = 0;
+//bool preIgnition = false;
 Simulation::Simulation() {
     Vector pos = Vector(SIMULATION_SIZE_X * -1, 0.0, 0);
     int currentRow = 0;
@@ -73,39 +73,43 @@ void Simulation::calculateVelocities() {
     std::copy(newParticles, newParticles + PARTICLE_AMOUNT, particles);
 }
 
-void Simulation::calculatePositions(double currentTime, bool ignite) {
+void Simulation::calculatePositions(double currentTime) {
+    double plankX;
+    if (currentTime < 0.5)
+    {
+        plankX = SIMULATION_SIZE_X;
+    }
+    else if (currentTime < 0.875)
+    {
+        plankX = SIMULATION_SIZE_X - ((currentTime - 0.5) * AVRG_PLANK_VELOCITY);
+    }
+    else
+    {
+        plankX = SIMULATION_SIZE_X - (0.375 * AVRG_PLANK_VELOCITY);
+    }
     for (int i = 0; i < PARTICLE_AMOUNT; i++) {
         particles[i]->pos = particles[i]->pos.add(particles[i]->vel.multiply(TIMESTEP));
 
-        double plankX = SIMULATION_SIZE_X;
-        if (currentTime < 0.2) {
-            plankX = SIMULATION_SIZE_X;
-        } else if (currentTime < 0.5) {
-            plankX = SIMULATION_SIZE_X - ((currentTime - 0.2) * AVRG_PLANK_VELOCITY);
-        } else {
-            plankX = SIMULATION_SIZE_X - (0.3 * AVRG_PLANK_VELOCITY);
-        }
-
         if (particles[i]->pos.x > plankX) {
-            if((currentTime > 0.5) && (currentTime < (0.5 + TIMESTEP))){
-                if(ignite == false){
-                    particlesTouching++;
-                    preIgnition = true;
-                }
-                else{
-                    preIgnition = false;
-                    Particle* current = particles[i];
-                    //current->vel.x = -1 * ( current->vel.len() + sqrt(2 * ENERGY_ADDED / particlesTouching / PARTICLE_MASS));
-                    current->vel.x = -1 * ( current->vel.x + sqrt(2 * ENERGY_ADDED / particlesTouching / PARTICLE_MASS));
-                    //current->vel.z = 0;
-                    //current->vel.y = 0;
-                    std::cout << current->vel.x << "\n";
-                }
-            }
-            else{
+            // if((currentTime > 0.5) && (currentTime < (0.5 + TIMESTEP))){
+            //     if(ignite == false){
+            //         particlesTouching++;
+            //         preIgnition = true;
+            //     }
+            //     else{
+            //         preIgnition = false;
+            //         Particle* current = particles[i];
+            //         //current->vel.x = -1 * ( current->vel.len() + sqrt(2 * ENERGY_ADDED / particlesTouching / PARTICLE_MASS));
+            //         current->vel.x = -1 * ( current->vel.x + sqrt(2 * ENERGY_ADDED / particlesTouching / PARTICLE_MASS));
+            //         //current->vel.z = 0;
+            //         //current->vel.y = 0;
+            //         std::cout << current->vel.x << "\n";
+            //     }
+            // }
+            // else{
                 particles[i]->pos.x = plankX - (particles[i]->pos.x - plankX);
-                particles[i]->vel.x = abs(particles[i]->vel.x) * -1;
-            }
+                particles[i]->vel.x = abs(particles[i]->vel.x) * -1 - AVRG_PLANK_VELOCITY;
+                //}
         } else if (particles[i]->pos.x < SIMULATION_SIZE_X * -1) {
             particles[i]->pos.x = SIMULATION_SIZE_X * -1 - (particles[i]->pos.x + SIMULATION_SIZE_X) ;
             particles[i]->vel.x = particles[i]->vel.x * -1.0;
@@ -122,11 +126,12 @@ void Simulation::calculatePositions(double currentTime, bool ignite) {
             particles[i]->vel.z = particles[i]->vel.z * -1.0;
         }
     }
-    if(preIgnition){
-        Simulation::calculatePositions(currentTime,true);
-        std::cout << particlesTouching <<"\n";
-    }
+    // if(preIgnition){
+    //     Simulation::calculatePositions(currentTime,true);
+    //     std::cout << particlesTouching <<"\n";
+    // }
 }
+
 void Simulation::printEnergy(){
     double energy = 0.0;
     for (int i = 0; i < PARTICLE_AMOUNT; i++) {
@@ -137,7 +142,7 @@ void Simulation::printEnergy(){
         energy += 0.5 * len * len * PARTICLE_MASS;
         energy += particles[i]->pos.y * 9.81 * PARTICLE_MASS;
     }
-    std::cout << "Energy: " << energy<< std::endl;
+    //std::cout << "Energy: " << energy<< std::endl;
 }
 
 std::string Simulation::logState() {

@@ -6,7 +6,7 @@
 int main() {
     // Create file
     std::ofstream filestream;
-    filestream.open("output.csv");
+    filestream.open("/output/output.csv");
 
     Simulation simulation;
     filestream << simulation.logState();
@@ -16,10 +16,9 @@ int main() {
         simulation.calculateForces();
         simulation.calculateAccelerations();
         simulation.calculateVelocities();
-        simulation.calculatePositions(currentTime,false);
+        simulation.calculatePositions(currentTime);
         filestream << simulation.logState();
-
-        std::cout << "Current time: " << currentTime << std::endl;
+        //std::cout << "Current time(ms): " << currentTime * 1000 << std::endl;
         currentTime += TIMESTEP;
     }
 

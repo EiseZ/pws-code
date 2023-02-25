@@ -1,5 +1,7 @@
 simulator/target/*
 simulator/*.csv
+docker/mounts/
+docker/constants/
 renderer/renders
 renderer/__pycache__
 renderer/tests

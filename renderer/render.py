@@ -5,6 +5,9 @@ import math
 import os
 
 def render(filename, simName):
+    timestep = 0.001
+    maxtime = 4
+    fps = 240
     try:
         os.mkdir("./renders/" + simName)
     except FileExistsError:
@@ -13,10 +16,11 @@ def render(filename, simName):
     finally:
         pass
     simData = loader.loader(filename)
-    conf = config(20,"#306BAC", 315, 120, 1)
-
-    for i in range(len(simData)):
-        renderStill(simName, i, simData[i], math.floor(3150/2), 1200, conf)
+    conf = config(1,"#306BAC", 315, 120, 1)
+    
+    for i in range(maxtime * fps):
+        print(f'rendering{i}')
+        renderStill(simName, i, simData[math.floor(i / (timestep * fps))], math.floor(3150/2), 1200, conf)
 
 def renderStill(simName, simId, currentVectors, width, height, conf):
     im = Image.new("RGB", ((width + conf.xMargin), (height+conf.yMargin)),color="#E3E3E3")
